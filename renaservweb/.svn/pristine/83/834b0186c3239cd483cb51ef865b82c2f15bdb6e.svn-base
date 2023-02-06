@@ -1,0 +1,23 @@
+.mat-card{
+	margin: 20px;
+}
+.mat-label{
+	width: 400px;
+	margin: 20px;
+}
+
+.data-item{
+	width: 550px;
+	margin: 20px;
+	display: inline-block;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #3f51b5;
+}
+
+.data-item .label{
+	display: inline-block;
+	width: 100px;
+	padding-right: 10px;
+	text-align: left;
+	font-weight: bold;
+}

@@ -1,0 +1,159 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {Observable, timer} from 'rxjs';
+import { RequestService } from '../request.service';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import { Router } from '@angular/router';
+
+interface Filtro {
+   dataInicial:Date;
+   dataFinal:Date;
+   cliente:string;
+   status:string;
+   pagina:number;
+   export:boolean
+}
+
+
+@Component({
+  selector: 'app-listaeventos',
+  templateUrl: './listaeventos.component.html',
+  styleUrls: ['./listaeventos.component.css']
+})
+export class ListaeventosComponent implements OnInit {
+
+  constructor(private request:RequestService, private router:Router) {
+
+
+  }
+
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+
+  displayedColumns: string[] = ['id', 'placa', 'cliente', 'dataCad', 'data', 'evento', 'quantidade', 'status', 'usuarioTratativa', 'dataTratativa'];
+  eventos:[] = [];
+  filteredClientes = [];
+  stateCtrl = new FormControl();  
+  refreshTimer;
+
+  filtro:Filtro = {
+    dataInicial: new Date(1),
+    dataFinal: new Date(),
+    cliente: "",
+    pagina: 1,
+    status: "0",
+    export: false
+  }
+  
+  clientes = [];
+  dataSource:MatTableDataSource<any>;
+
+  ngOnDestroy() {
+    console.log("cancelando timer");
+    clearInterval(this.refreshTimer);
+  }
+
+  ngOnInit() {
+  	this.request.get("listaclientes","").subscribe(data => {
+
+  		this.clientes = data as [];
+
+      this.clientes.map(cliente => {
+          cliente.toString = function() {
+            return cliente.nome;
+          }
+      });
+
+  	});
+
+    this.dataSource = new MatTableDataSource(this.eventos);
+    //this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    let f = this.request.getFilter("listaeventos");
+    if (f) {
+      this.filtro = f as Filtro;
+      this.paginator.pageIndex = this.filtro.pagina;
+    }
+    
+    this.loadData();
+    this.refreshTimer = setInterval(() => {
+      console.log("verificando");
+      this.loadData();
+    }, 10000);
+    
+  }
+
+  change() {
+  	this.filteredClientes = this.clientes.filter(data => data.nome.toLowerCase().indexOf(this.filtro.cliente.toString().toLowerCase()) === 0);
+  	 //console.log(this.filteredStates);
+  }
+
+  clienteSelected() {
+    
+  }
+
+  pesquisar() {
+     this.paginator.pageIndex = 0;
+     this.filtro.dataFinal = new Date();
+     this.filtro.export = false;
+     this.loadData();
+     this.request.storeFilter("listaeventos", this.filtro);
+  }
+
+  exportar() {
+    this.filtro.export = true;
+    this.loadData();
+  }
+
+  private loadData() {
+    this.filtro.pagina = this.paginator.pageIndex;
+
+    this.request.post("listaeventos",{
+       dataInicio: this.filtro.dataInicial.getTime(),
+       dataFinal: this.filtro.dataFinal.getTime(),
+       cliente: this.filtro.cliente,
+       pagina: (this.paginator.pageIndex+1),
+       export: this.filtro.export,
+       status: parseInt(this.filtro.status)
+     }).subscribe(data => {
+       let ret = data as any;
+
+       if (ret.report) {
+         window.open('/renaserv-war/download?file=' + ret.file);
+       } else {
+         this.eventos = data["ocorrencias"];   
+         this.eventos.map(evento => {
+           let e:any = evento;
+           e.dataEvento = new Date();
+           e.dataEvento.setTime(e.id.dataDados);
+           e.dataCadD = new Date(e.dataCad);
+           if (e.tratativa.data) {
+              e.tratativa.dataD = new Date(e.tratativa.data);
+           }
+         });
+         this.dataSource.data = this.eventos;
+         console.log(this.eventos);
+
+         this.paginator.pageSize = 50;
+         this.paginator.length = data["qtd"];
+       }
+        
+     });
+  }
+
+  pageChange() {
+    this.loadData();
+  }
+
+  tratar(selected:any) {
+    this.router.navigateByUrl("/principal/ocorrencia/" + selected.id + "/" + selected.veiculo + "/" + selected.evento + "/" + selected.dataDados);
+  }
+
+  public filtrarStatus() {
+    this.pesquisar();
+  }
+
+}

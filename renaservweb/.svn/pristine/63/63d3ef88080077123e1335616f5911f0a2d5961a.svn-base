@@ -1,0 +1,13 @@
+<h2>Evento</h2>
+
+<form class="example-form">
+  <mat-form-field class="example-full-width">
+    <input name="descricao" matInput placeholder="Descrição" [(ngModel)]="data.descricao">
+  </mat-form-field>
+
+  <div class="example-button-row">
+ 	 <button mat-raised-button color="primary" (click)="doSave()">Alterar</button>
+  </div>
+</form>
+
+

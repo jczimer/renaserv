@@ -1,0 +1,25 @@
+table{
+	width: 100%;
+}
+.formfield{
+	margin: 20px;
+}
+.cellItem{
+	padding: 10px;	
+}
+.flex-lwt{
+	display: flex;
+}
+.flex1{
+	flex: 1
+}
+.item-card{
+	margin: 5px;
+}
+.red{
+	color: red;
+}
+.blue{
+	color: blue;
+}
+

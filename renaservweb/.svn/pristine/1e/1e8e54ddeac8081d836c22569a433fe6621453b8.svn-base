@@ -1,0 +1,216 @@
+<div class="form-tratativa">
+
+	<h2>Ocorrência {{ocorrencia.evento.descricao}}
+		<mat-chip-list class="ocorrencia-status">
+	          <mat-chip *ngIf="ocorrencia.status === 0" color="warn" selected>Nova</mat-chip>
+	          <mat-chip *ngIf="ocorrencia.status === 1" color="primary" selected>Em andamento</mat-chip>
+	          <mat-chip *ngIf="ocorrencia.status === 2" disabled>Finalizada</mat-chip>
+     	</mat-chip-list>
+	</h2>
+
+	
+
+	<mat-tab-group>  	   	 
+	  <mat-tab label="Informações da Ocorrência">
+	  	  
+	  	
+	  	<div class="info">
+			
+			<mat-card>	
+				<h3>Ocorrência</h3>
+				<table>
+					<tr>
+						<td>Data ocorrência:</td>
+						<td>{{ocorrencia.id.dataDados | date: 'dd/MM/yyyy HH:mm'}}</td>
+					</tr>
+					<tr>
+						<td>Evento:</td>
+						<td>{{ocorrencia.evento.descricao}}</td>
+					</tr>
+					<tr>				
+						<td>Coordenadas:</td>
+						<td>
+							<a [href]="link" target="_blank"><mat-icon>map</mat-icon></a>
+							{{ocorrencia.lat | number: '1.1-4'}},{{ocorrencia.lon | number: '1.1-4'}}
+						</td>
+					</tr>
+					<tr>
+						<td>Endereço:</td>
+						<td>{{endereco}}</td>
+					</tr>
+				</table>
+			</mat-card>
+
+			<mat-card>	
+				<h3>Veículo</h3>
+				<table>							
+					<tr>
+						<td>Placa:</td>
+						<td>{{ocorrencia.veiculo.placa}}</td>
+					</tr>
+					<tr>
+						<td>Modelo:</td>
+						<td>{{ocorrencia.veiculo.modelo}}</td>
+					</tr>
+					<tr>
+						<td>Cor:</td>
+						<td>{{ocorrencia.veiculo.cor}}</td>
+					</tr>
+					<tr>
+						<td>Ano:</td>
+						<td>{{ocorrencia.veiculo.ano}}</td>
+					</tr>	
+					<tr>
+						<td>Chassi:</td>
+						<td>{{ocorrencia.veiculo.chassi}}</td>
+					</tr>	
+					<tr>
+						<td>Renavam:</td>
+						<td>{{ocorrencia.veiculo.renavam}}</td>
+					</tr>
+				</table>
+			</mat-card>
+
+			<mat-card>
+				<h3>Proprietário</h3>
+				<table>
+					<tr>
+						<td>Nome:</td>
+						<td>{{ocorrencia.proprietario.nome}}</td>
+					</tr>
+					<tr>
+						<td>Telefones:</td>
+						<td>{{ocorrencia.proprietario.telefone}}</td>
+					</tr>
+					<tr>
+						<td style="vertical-align: top">Contatos:</td>
+						<td>
+							<div> 
+								<div *ngFor="let contato of contatos">{{contato}}</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</mat-card>
+			<mat-card>
+				<h3>Plataforma</h3>
+				<table>													
+					<tr>
+						<td>Plataforma:</td>
+						<td>{{ocorrencia.cliente.plataforma}}</td>
+					</tr>
+					<tr>
+						<td>Cliente:</td>
+						<td>{{ocorrencia.cliente.nome}}</td>
+					</tr>
+					<tr>
+						<td>Usuário:</td>
+						<td>{{ocorrencia.cliente.usuario}} </td>
+					</tr>
+					<tr>
+						<td>Senha:</td>
+						<td>{{ocorrencia.cliente.senha}}</td>
+					</tr>						
+				</table>
+			</mat-card>
+		</div>
+		<div class="map">
+
+			<mat-card>	
+				<div style="height: 450px;"
+				     leaflet 
+				     [leafletOptions]="options"
+				     (leafletMapReady)="onMapReady($event)">
+				</div>
+			</mat-card>
+
+			<mat-card>	
+				<h3>Posição Atual</h3>
+				<table>
+					<tr>
+						<td>Data da posição</td>
+						<td>{{ocorrencia.posicaoAtual.data | date: 'dd/MM/yyyy HH:mm'}}</td>
+					</tr>
+					<tr>
+						<td>Velocidade:</td>
+						<td>{{ocorrencia.posicaoAtual.speed}}</td>
+					</tr>
+					<tr>
+						<td>T.bateria:</td>
+						<td>{{ocorrencia.posicaoAtual.tensaoBateria | number: '1.1-2'}}v </td>
+					</tr>
+					<tr>
+						<td>Ignição:</td>
+						<td>{{statusIgnicao(ocorrencia.posicaoAtual.io)}} </td>
+					</tr>
+					<tr>
+						<td>Velocidade:</td>
+						<td>{{ocorrencia.posicaoAtual.speed | number: '1.0'}} </td>
+					</tr>
+					<tr>
+						<td>Coordenadas:</td>
+						<td><a [href]="linkAtual" target="_blank"><mat-icon>map</mat-icon></a>
+						{{ocorrencia.posicaoAtual.lat | number: '1.1-4'}},{{ocorrencia.posicaoAtual.lon | number: '1.1-4'}}</td>
+					</tr>
+					<tr>
+						<td>Endereço:</td>
+						<td>{{enderecoAtual}}</td>
+					</tr>
+				</table>	
+			</mat-card>
+		</div>
+		
+		
+
+
+
+	  </mat-tab>
+
+
+	  <mat-tab label="Tratativa">
+
+		<div class="tratativa" *ngIf="ocorrencia.status != 2">	
+
+			<mat-card>
+
+				<mat-form-field class="tratativa-full-width">
+					<textarea matInput placeholder="Informe o que foi feito" style="height: 150px" [(ngModel)]="descritivo"></textarea>
+				</mat-form-field>
+
+
+				<div style="text-align: center">
+					<button *ngIf="ocorrencia.status < 2" mat-raised-button class="finalizar-button" color="primary" [disabled]="disabled" (click)="salvar(false)">Salvar</button>
+					<button mat-raised-button class="finalizar-button" color="primary" [disabled]="disabled" (click)="salvar(true)">Salvar e Finalizar</button>
+				</div>
+
+			</mat-card>
+		</div>
+
+		<div class="ultimas-tratativas">
+			<mat-card>	
+				<div>
+					<table>
+						<tr>
+							<th>Data</th>
+							<th>Usuário</th>
+							<th>Tratativa</th>
+						</tr>
+						<tr *ngFor="let log of logs">
+							<td>{{log.data | date: 'dd/MM/yyyy HH:mm'}}</td>
+							<td>{{log.usuario}}</td>
+							<td>{{log.tratativa}}</td>
+						</tr>
+					</table>
+				</div>
+			</mat-card>
+		</div>
+
+	  </mat-tab>
+	</mat-tab-group>
+
+	
+
+	
+	
+
+</div>

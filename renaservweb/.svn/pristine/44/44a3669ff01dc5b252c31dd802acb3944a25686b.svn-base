@@ -1,0 +1,14 @@
+
+<div class="example-container">
+  <img src="assets/logo-login.png" class="logo"/>	
+
+  <mat-form-field>
+    <input matInput placeholder="Login" [(ngModel)]="login">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Senha" type="password" [(ngModel)]="senha">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="entrar()">Entrar</button>
+</div>

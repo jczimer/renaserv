@@ -1,0 +1,52 @@
+
+<mat-card>
+	<h2>Veículo</h2>
+
+	<div class="data-item">
+	<mat-label class="mat-label"><span class="label">Placa:</span> {{veiculo.placa}}</mat-label>
+	</div>
+
+	<div class="data-item">
+	<mat-label class="mat-label"><span class="label">Modelo</span> {{veiculo.modelo}}</mat-label>
+	</div>
+
+	<div class="data-item">
+	<mat-label class="mat-label"><span class="label">Ano:</span> {{veiculo.ano}}</mat-label>
+	</div>
+
+	<div class="data-item">
+	<mat-label class="mat-label"><span class="label">Cor:</span> {{veiculo.cor}}</mat-label>
+	</div>
+
+	<div class="data-item">
+	<mat-label class="mat-label">
+		<span class="label">Renavam:</span> {{veiculo.renavam}}
+	</mat-label>
+	</div>
+
+	<div class="data-item">
+	<mat-label class="mat-label"><span class="label">Chassi:</span> {{veiculo.chassi}}</mat-label>
+	</div>
+</mat-card>
+
+<mat-card>
+	<h2>Proprietário</h2>
+	<div>
+		<div class="data-item">
+		<mat-label class="mat-label"><span class="label">Proprietario:</span>	 {{veiculo.proprietario.nome}}</mat-label>
+		</div>
+
+		<div class="data-item">
+		<mat-label class="mat-label"><span class="label">Telefones:</span>	 {{veiculo.proprietario.telefone}}</mat-label>
+		</div>
+
+		<div class="data-item">
+		<mat-label class="mat-label">
+			<span style="vertical-align: top" class="label">Contatos:</span>
+			<div style="display: inline-block; width: 300px">
+				<div  *ngFor="let contato of contatos">{{contato}}</div>
+			</div>
+		</mat-label>
+		</div>
+	</div>
+</mat-card>

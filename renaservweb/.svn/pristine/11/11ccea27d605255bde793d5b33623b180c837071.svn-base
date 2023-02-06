@@ -1,0 +1,57 @@
+<h2>Clientes</h2>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">
+            <button mat-icon-button>
+                 <a [routerLink]="['/principal/cliente/edit/0']">
+                    <mat-icon>add</mat-icon>
+                </a>
+              </button>
+          </span> </th>
+          <td mat-cell *matCellDef="let element"> 
+              <button mat-icon-button aria-label="Editar cliente">
+                <a [routerLink]="['/principal/cliente/edit', element.id]">
+                    <mat-icon>create</mat-icon>
+                </a>
+              </button>
+          </td>
+        </ng-container>      
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">Nome</span> </th>
+          <td mat-cell *matCellDef="let element"> <span class="cellItem">{{element.nome}}</span> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="system">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">Plataforma</span> </th>
+          <td mat-cell *matCellDef="let element"> <span class="cellItem">{{element.plataforma}}</span> </td>
+        </ng-container>
+
+         <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">Usuário</span> </th>
+          <td mat-cell *matCellDef="let element"> <span class="cellItem">{{element._user}}</span> </td>
+        </ng-container>
+
+         <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">Senha</span> </th>
+          <td mat-cell *matCellDef="let element"> <span class="cellItem">{{element._key}}</span> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> <span class="cellItem">Status</span> </th>
+          <td mat-cell *matCellDef="let element"> <span class="cellItem">{{element.status}}</span> </td>
+        </ng-container>     
+
+       
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+

@@ -1,0 +1,35 @@
+{
+	handlers: [
+		
+		
+		{
+			name: 'mportal',
+			className: 'com.winksys.renaserv.gateway.driver.mportal.MPortalDriver'
+		},
+		{
+			name: 'rodar',
+			className: 'com.winksys.renaserv.gateway.driver.rodar.RodarDriver'
+		},
+		{
+			name: 'stc',
+			className: 'com.winksys.renaserv.gateway.driver.stc.STCDriver'
+		}
+		
+	],
+	x: [
+	
+		{
+			name: 'rodar',
+			className: 'com.winksys.renaserv.gateway.driver.rodar.RodarDriver'
+		},
+		{
+			name: 'mportal',
+			className: 'com.winksys.renaserv.gateway.driver.mportal.MPortalDriver'
+		},{
+			name: 'rodar',
+			className: 'com.winksys.renaserv.gateway.driver.rodar.RodarDriver'
+		},
+	]
+	
+
+}

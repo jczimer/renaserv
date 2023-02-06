@@ -1,0 +1,9 @@
+mail.smtp.auth=true
+mail.smtp.host=winksysmail.com.br
+mail.smtp.port=587
+mail.smtp.timeout=5000
+winksys.mail.user=noreply
+winksys.mail.pass=y20354mar
+winksys.mail.from=noreply@winksysmail.com.br
+winksys.mail.name=NoReply
+winksys.mail.destination=jean@winksys.com.br

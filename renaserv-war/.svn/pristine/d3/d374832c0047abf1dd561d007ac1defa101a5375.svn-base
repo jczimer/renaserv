@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background: #00678f; text-align: center; font-family: Verdana, sans-serif;">
+	
+	<div style="width: 800px; background: white; margin: auto; padding: 20px; border: 1px solid #aaa; border-radius: 5px; box-shadow: 2px 2px 20px black;">
+		<h1 style="color: #009eda">Olá Ciclano</h1>
+		
+		<p>Informamos que as contas relacionadas abaixo, estão à mais de 10 minutos sem comunicação:</p>
+		
+		<table style="width: 70%; 
+			border: none; 
+			text-align: center; 
+			margin: 50px auto 0 auto; 
+			border: 2px solid black; 
+			border-radius: 5px; 
+			padding: 20px;
+			box-shadow: 5px 5px 20px #aaa;"
+			>
+			<tr>
+				<th>Conta/Cliente</th>
+				<th>Ultima verificação</th>
+			</tr>
+			<tr>
+				<td>Renaserv - Rodar</td>
+				<td>10/10/2017 16:00</td>
+			</tr>
+			<tr>
+				<td>Renaserv - Rodar</td>
+				<td>10/10/2017 16:00</td>
+			</tr>
+			<tr>
+				<td>Renaserv - Rodar</td>
+				<td>10/10/2017 16:00</td>
+			</tr>
+		</table>
+		
+		<img src="assets/renaserv.png" style="height: 100px; margin-top: 50px"/>
+		
+		<p style="margin-top: 40px; font-size: 10px;">
+			<small>Esta é uma mensagem enviada automaticamente pelo sistema de verificação. Não precisa responder, ok?</small>
+		</p>
+	</div>
+		
+</body>
+</html>

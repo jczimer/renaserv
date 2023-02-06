@@ -1,0 +1,9 @@
+table{
+	width: 100%;
+}
+.formfield{
+	margin: 20px;
+}
+.cellItem{
+	padding: 10px;	
+}

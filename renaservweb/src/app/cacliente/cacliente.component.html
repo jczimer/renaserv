@@ -1,0 +1,115 @@
+
+<h2>Cadastro de Clientes</h2>
+
+<div class="example-container">
+
+  <form #formCadastro="ngForm">	
+
+	  <mat-tab-group>
+	  <mat-tab label="Dados cadastrais">
+
+	  	
+	  	
+	  		<mat-form-field>
+			  <mat-select name="status" placeholder="Status" [(value)]="status">
+			      <mat-option value="0">Ativo</mat-option>
+			      <mat-option value="1">Inativo</mat-option>			      
+			   </mat-select>
+			</mat-form-field>
+
+	  		<mat-form-field>
+	  			
+
+			    <input name="nome" #name="ngModel" minlength="3" [(ngModel)]="cliente.nome" required="true" matInput placeholder="Nome">
+
+
+			     <div *ngIf="name.invalid && (name.dirty || name.touched)"
+				    class="alert alert-danger">
+
+				  <div *ngIf="name.errors.required">
+				    Informe o nome do cliente
+				  </div>
+				  <div *ngIf="name.errors.minlength">
+				    Nome deve conter pelo menos 3 letras
+				  </div>
+				 </div>
+			  </mat-form-field>
+
+			  <mat-form-field >
+			    <mat-select name="sistema" placeholder="Sistema" [(value)]="sistema">
+			      <mat-option value="1">Rodar</mat-option>
+			      <mat-option value="2">STC</mat-option>
+			      <mat-option value="3">Multiportal</mat-option>
+			    </mat-select>
+			  </mat-form-field>
+
+			   <mat-form-field>
+			    <input name="url" [(ngModel)]="cliente._url" matInput placeholder="URL">
+			  </mat-form-field>
+
+			   <mat-form-field>
+			    <input name="user" [(ngModel)]="cliente._user" matInput placeholder="Login">
+			  </mat-form-field>
+
+			  <mat-form-field>
+			    <input name="password" [(ngModel)]="cliente._password" matInput placeholder="Senha">
+			  </mat-form-field>
+
+			  <mat-form-field>
+			    <input name="key" [(ngModel)]="cliente._key" matInput placeholder="Key">
+			  </mat-form-field>
+
+			  <mat-form-field>
+			    <input name="email" #email="ngModel" [(ngModel)]="cliente.email" matInput placeholder="Email" required>
+
+
+			    <div *ngIf="email.invalid && (name.dirty || email.touched)"
+				    class="alert alert-danger">
+
+				  <div *ngIf="email.errors.required">
+				    Informe o email do cliente
+				  </div>	  
+				 </div>
+			  </mat-form-field>
+
+			  <div style="margin: 10px 0 10px 0" *ngIf="cliente.id > 0">
+
+			  	  <div *ngIf="cliente.image">
+			  	  		<img src="{{fileLogo}}" height="200" width="200" />	
+			  	  </div>
+
+	 			  <input type="file" 
+			           name="imagem" accept="image/*" class="form-control-file"
+			           (change)="handleFileInput($event.target.files)">
+
+			      <button color="primary" mat-raised-button [disabled]="!fileToUpload" (click)="salvarImagem()">
+			      	  Salvar Imagem
+			      </button>
+			  </div>
+			
+
+
+	  </mat-tab>
+
+	  <mat-tab label="Eventos monitorados">
+	  	
+	  	  <mat-list>
+			 <mat-list-item *ngFor="let evento of eventos">
+			 	<mat-checkbox  name="evento" class="example-margin"  [checked]="evento.checked" (change)="evento.checked= $event.checked">
+			 		{{evento.descricao}}
+			 	</mat-checkbox>
+			 </mat-list-item>
+		  </mat-list>
+
+	  </mat-tab>
+	  
+	</mat-tab-group>
+
+	<button color="primary" [disabled]="!formCadastro.form.valid" mat-raised-button (click)="salvar()">Salvar</button>
+
+  </form>  
+  
+</div>
+
+
+

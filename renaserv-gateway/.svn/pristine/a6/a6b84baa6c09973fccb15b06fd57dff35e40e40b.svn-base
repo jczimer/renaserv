@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/intact-3th-party/json/json-lib-2.2.3-jdk13.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/apache-common/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/apache-common/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/axis2/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/ezmorph/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/apache-common/commons-collections.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/apache-common/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/hibernate-release-5.2.12.Final/lib/required/hibernate-jpa-2.1-api-1.0.0.Final.jar" sourcepath="/Users/winksys/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final-sources.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/mysql-connector-java-5.0.4/mysql-connector-java-5.0.4-bin.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/apache-common/log4j-1.2.17.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/renaserv-data"/>
+	<classpathentry kind="lib" path="/intact-3th-party/httpclient/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/httpclient/httpclient-4.1.1.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/httpclient/httpclient-cache-4.1.1.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/httpclient/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="/intact-3th-party/httpclient/httpmime-4.1.1.jar"/>
+	<classpathentry kind="lib" path="/winktracker-lib/windi-ui-tools.jar" sourcepath="/Users/winksys/workspaces_graficazf/windi-ui-tools/src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

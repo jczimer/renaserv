@@ -1,0 +1,23 @@
+<h2>Usuário</h2>
+
+<form #formCadastro="ngForm">
+ 	<mat-form-field>
+    	<input name="usuario"  matInput [(ngModel)]="usuario.usuario" placeholder="Login" />
+    </mat-form-field>
+    <mat-form-field>
+    	<input name="senha"  matInput [(ngModel)]="usuario.senha" placeholder="Senha" />
+    </mat-form-field>
+
+    <mat-form-field>
+	  <mat-label>Tipo</mat-label>
+	  <mat-select name="tipo" [(ngModel)]="usuario.tipo">
+	    <mat-option *ngFor="let tipo of tipos" [value]="tipo.tipo">
+	      {{tipo.descricao}}
+	    </mat-option>
+	  </mat-select>
+	</mat-form-field>
+
+	<div style="text-align: center; margin: auto">
+    	<button color="primary" [disabled]="!formCadastro.form.valid" mat-raised-button (click)="salvar()">Salvar</button>
+	</div>
+</form>

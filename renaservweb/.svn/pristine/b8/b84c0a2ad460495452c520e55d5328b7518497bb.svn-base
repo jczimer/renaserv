@@ -1,0 +1,59 @@
+<div class="principal-top">
+	<div class="circle">
+		<img src="assets/renaserv.png" alt="Renaserv" title="Renaserv" height="60"/>
+    </div>
+
+    <h2>Sistema de Tratativa de Ocorrências</h2>
+
+    <div class="panel-usuario">Usuário: {{usuario.usuario}}</div>
+
+
+    <mat-sidenav-container class="sidenav" >
+	  <mat-sidenav #sidenav mode="side" [(opened)]="menu">
+	  	<div class="menu">
+		   	  <button mat-button style="color: orange" (click)="navigate('/principal/listaeventos')">			  	
+				 <mat-icon>feedback</mat-icon>
+				 <div>Ocorrências</div>				
+			  </button>
+			   <button mat-button style="color: green" (click)="navigate('/principal/veiculo/lista')">
+			  	    <mat-icon>commute</mat-icon>
+				    <div>Veículos</div>				
+			  </button>
+			  <button *ngIf="usuario.tipo == 0" mat-button style="color: rgb(255, 204, 0)" (click)="navigate('/principal/historico')">
+			  	    <mat-icon>event_note</mat-icon>
+				    <div>Histórico</div>				
+			  </button>
+			  <button *ngIf="usuario.tipo == 0" mat-button style="color: blue" (click)="navigate('/principal/cliente/lista')">
+			  	<mat-icon>person</mat-icon>
+				<div>Clientes</div>				
+			  </button>
+			  <button *ngIf="usuario.tipo == 0" mat-button style="color: purple" (click)="navigate('/principal/usuario/lista')">
+			     <mat-icon>people</mat-icon>
+			     <div>Usuários</div>
+			  </button>			 
+			  <button *ngIf="usuario.tipo == 0" mat-button style="color: fuchsia" (click)="navigate('/principal/tipoevento/lista')">
+			  	 <mat-icon>alarm</mat-icon>
+				<div>Eventos</div>
+			  </button>			  
+			  <button mat-button (click)="doExit()" style="color: red">
+			    <mat-icon>exit_to_app</mat-icon>
+			    <div>Sair</div>
+			  </button>
+		</div>
+	  </mat-sidenav>
+
+	  <mat-sidenav-content>
+	    <router-outlet></router-outlet>
+	  </mat-sidenav-content>
+	</mat-sidenav-container>
+
+
+
+	
+	
+</div>
+
+<audio id="audio">
+	<source src="assets/siren.wav" type="audio/mpeg">	
+</audio>
+

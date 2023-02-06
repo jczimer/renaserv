@@ -1,0 +1,19 @@
+.example-container {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 20px auto auto auto;
+  padding: 10px;
+  border: 1px solid #eee;
+  text-align: center;
+}
+
+.example-container .logo{
+	width: 200px;
+	margin: auto;
+}
+
+.example-container > * {
+  width: 100%;
+}

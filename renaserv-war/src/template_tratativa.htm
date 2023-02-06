@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background: #00678f; text-align: center; font-family: Verdana, sans-serif;">
+	
+	<div style="width: 800px; background: white; margin: auto; padding: 20px; border: 1px solid #aaa; border-radius: 5px; box-shadow: 2px 2px 20px black;">
+		<h1 style="color: #009eda">Olá $ctx.destName</h1>
+		
+		<h2>Registro de Tratativa de Ocorrência</h2>
+		<table style="width: 70%; 
+			border: none; 
+			text-align: left; 
+			margin: 50px auto 0 auto; 
+			border-radius: 5px; 
+			padding: 20px;
+			box-shadow: 5px 5px 20px #aaa;">
+			
+			<tr>
+				<td>Placa:</td>
+				<td>${ctx.veiculo.placa}</td>
+			</tr>
+			<tr>
+				<td>Modelo:</td>
+				<td>${ctx.veiculo.modelo}</td>
+			</tr>
+			<tr>
+				<td>Ocorrência:</td>
+				<td>${ctx.evento.descricao}</td>
+			</tr>
+			<tr>
+				<td>Dt.Ocorrência:</td>
+				<td>$date.format("dd/MM/yyyy HH:mm",  $ctx.ocorrencia.id.dataDados)</td>
+			</tr>
+			<tr>
+				<td>Coordenadas:</td>
+				<td> <a href="https://www.google.com/maps/preview?q=${ctx.ocorrencia.lat},${ctx.ocorrencia.lon}">${ctx.ocorrencia.lat},${ctx.ocorrencia.lon}</a></td>
+			</tr>
+			<tr>
+				<td>Atendente:</td>
+				<td>${ctx.ocorrencia.usuarioTratativa}</td>
+			</tr>
+			<tr>
+				<td>Data/Hora Finalização:</td>
+				<td>$date.format("dd/MM/yyyy HH:mm",  $ctx.ocorrencia.dataTratativa)</td>
+			</tr>
+			<tr>
+				<td>Tratativa:</td>
+				<td>$ctx.tratativa</td>
+			</tr>
+			
+			
+		</table>
+		
+		<img src="cid:AbcXyz123" style="height: 100px; margin-top: 50px"/>
+		
+		<p style="margin-top: 40px; font-size: 10px;">
+			<small>Esta é uma mensagem enviada automaticamente pelo sistema de verificação.</small>
+		</p>
+	</div>
+		
+</body>
+</html>

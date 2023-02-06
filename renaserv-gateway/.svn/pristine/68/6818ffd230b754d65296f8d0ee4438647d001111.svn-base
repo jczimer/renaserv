@@ -1,0 +1,295 @@
+package com.winksys.renaserv.gateway.driver.rodar;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+
+import com.winksys.renaserv.data.Credential;
+import com.winksys.renaserv.data.EnStatus;
+import com.winksys.renaserv.data.EventoMonitorado;
+import com.winksys.renaserv.data.Ocorrencia;
+import com.winksys.renaserv.data.Ocorrencia.OcorrenciaId;
+import com.winksys.renaserv.data.Veiculo;
+import com.winksys.renaserv.data.Veiculo.VeiculoId;
+import com.winksys.renaserv.gateway.Context;
+import com.winksys.renaserv.gateway.DataProvider;
+import com.winksys.renaserv.gateway.DataProxy;
+import com.winksys.renaserv.gateway.Plugin;
+import com.winksys.renaserv.gateway.cmd.ICommand;
+import com.winksys.renaserv.gateway.cmd.PersistOcorrencia;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+
+public class RodarDriver implements Plugin {
+
+	protected static final Logger LOG = Logger.getLogger(RodarDriver.class);
+
+	private class CredentialRunnable implements Runnable {
+
+		private Credential credential;
+		private Context ctx;
+		
+
+		public CredentialRunnable(Context ctx, Credential credential) {
+			this.ctx = ctx;
+			this.credential = credential;
+		}
+
+		@Override
+		public void run() {
+
+			while (true) {
+				
+				if (active()) {				
+					try {
+						// busca clientes
+						updateCustomer();
+	
+						// busca veiculos
+						updateVehicles();
+	
+						final String lastCheckKey = "lastcheck_" + credential.getId();
+						// verifica os eventos do clente
+						updateEvents(lastCheckKey);
+					} catch (Exception e) {
+						LOG.error("", e);
+					}
+				}
+
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+				}
+
+			}
+		}
+
+		private boolean active() {
+			EnStatus status = DataProxy.getInstance().execute(new ICommand() {
+				
+				@Override
+				public <E> E execute(EntityManager em) {
+					Credential find = em.find(Credential.class, credential.getId());
+					return (E) find.getStatus();
+				}
+			});
+			
+			return status == EnStatus.ATIVO;
+		}
+
+		private void updateEvents(final String lastCheckKey) throws ClientProtocolException, IOException {
+
+			Date lastcheck = ctx.getProperty(lastCheckKey);
+
+			if (lastcheck == null) {
+				lastcheck = DataProxy.getInstance().execute(new ICommand() {
+
+					@Override
+					public <E> E execute(EntityManager em) {
+						Query query = em.createQuery(
+								"select max(o.id.dataDados) from Ocorrencia o where o.id.veiculo.id.credential=:cred");
+						query.setParameter("cred", credential);
+						List<Date> resultList = query.getResultList();
+
+						if (resultList.isEmpty()) {
+							return null;
+						}
+
+						return (E) resultList.iterator().next();
+					}
+				});
+			}
+
+			if (lastcheck == null) {
+				lastcheck = new Date();
+			}
+			LOG.info("Verificando eventos " + lastcheck);
+
+			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+
+			String url = credential.getUrl() + "/api?u=" + credential.getUser() + "&s=" + credential.getPassword()
+					+ "&m=getocorr&format=json&dt=" + sdf.format(lastcheck);
+			LOG.debug(url);
+
+			HttpGet get = new HttpGet(url);
+			DefaultHttpClient client = new DefaultHttpClient();
+			HttpParams params = client.getParams();
+			HttpConnectionParams.setConnectionTimeout(params, 5000);
+			HttpConnectionParams.setSoTimeout(params, 15000);
+
+			HttpResponse response = client.execute(get);
+			String string = EntityUtils.toString(response.getEntity());
+			JSONArray data = (JSONArray) JSONSerializer.toJSON(string);
+
+			for (int i = 0; i < data.size(); i++) {
+
+				JSONObject ojson = data.getJSONObject(i);
+				JSONObject ejson = ojson.getJSONObject("evento");
+				JSONObject pjson = ojson.getJSONObject("posicao");
+
+				Date dataEvento = new Date(ojson.getLong("data"));
+				int idVeiculo = ojson.getInt("veiculo");
+				long dataDados = pjson.getLong("data");
+				double lat = pjson.getDouble("lat");
+				double lon = pjson.getDouble("lon");
+				int io = pjson.getInt("io");
+				double vel = pjson.getDouble("velocidade");
+
+				List<EventoMonitorado> eventos = DataProvider.getEventosMonitorados(credential);
+
+				EventoMonitorado violatedEvent = null;
+				for (EventoMonitorado eventoMonitorado : eventos) {
+					if (eventoMonitorado.getId().getEvento().getDescricao().equals(ejson.getString("descricao"))) {
+						violatedEvent = eventoMonitorado;
+						break;
+					}
+				}
+
+				if (violatedEvent != null) {
+					LOG.debug("Ocorrencia: " + ojson.getInt("id"));
+					VeiculoId vid = new VeiculoId();
+					vid.setCredential(credential);
+					vid.setId(idVeiculo);
+
+					Veiculo veiculo = new Veiculo();
+					veiculo.setId(vid);
+
+					// identificador da ocorrencia
+					OcorrenciaId oid = new OcorrenciaId();
+					oid.setDataDados(new Date(dataDados));
+					oid.setEvento(violatedEvent.getId().getEvento());
+					oid.setVeiculo(veiculo);
+
+					// ocorrencia
+					Ocorrencia ocorrencia = new Ocorrencia();
+					ocorrencia.setId(oid);
+					ocorrencia.setIo(io);
+					ocorrencia.setLat((float) lat);
+					ocorrencia.setLon((float) lon);
+					ocorrencia.setSpeed((float) vel);
+					ocorrencia.setDataCad(new Date());
+
+					DataProxy.getInstance().execute(new PersistOcorrencia(ocorrencia));
+
+				}
+
+				// verifica se a data do evento for maior que a ultima
+				if (dataEvento.compareTo(lastcheck) > 0) {
+					lastcheck = dataEvento;
+				}
+
+			}
+
+			ctx.setProperty(lastCheckKey, lastcheck);
+
+		}
+
+		private void updateVehicles() throws ClientProtocolException, IOException {
+
+			String url = credential.getUrl() + "/api?u=" + credential.getUser() + "&s=" + credential.getPassword()
+					+ "&m=getcomm&format=json";
+			LOG.debug(url);
+
+			HttpGet get = new HttpGet(url);
+			DefaultHttpClient client = new DefaultHttpClient();
+			HttpParams params = client.getParams();
+			HttpConnectionParams.setConnectionTimeout(params, 5000);
+			HttpConnectionParams.setSoTimeout(params, 15000);
+
+			HttpResponse response = client.execute(get);
+			String string = EntityUtils.toString(response.getEntity());
+
+			JSONArray veiculos = (JSONArray) JSONSerializer.toJSON(string);
+			for (int i = 0; i < veiculos.size(); i++) {
+				JSONObject veiculo = (JSONObject) veiculos.getJSONObject(i);
+				handleVeiculo(veiculo, credential, ctx);
+			}
+
+		}
+
+		private void updateCustomer() throws ClientProtocolException, IOException {
+
+			final String cliUpdateKey = "cli_update_" + credential.getId();
+			Date lastUpdate = ctx.getProperty(cliUpdateKey);
+
+			boolean canExecute = false;
+			if (lastUpdate == null) {
+				canExecute = true;
+			} else {
+				long diff = System.currentTimeMillis() - lastUpdate.getTime();
+				if (diff > 1800000) {
+					canExecute = true;
+				}
+			}
+
+			// le a cada 30 minutos
+			// carrega os dados dos clientes para que se tenha a informação mais completa
+			if (canExecute) {
+
+				GetClientesRequest request = new GetClientesRequest(credential.getUrl(), credential.getUser(),
+						credential.getPassword());
+				GetClientesProcessor processor = new GetClientesProcessor(DataProxy.getInstance(), credential);
+				JSONArray data = request.execute();
+				processor.execute(data);
+
+				// atualiza o controle de atualização
+				ctx.setProperty(cliUpdateKey, new Date());
+
+			}
+		}
+
+	}
+	
+	HashSet<Integer> mapControl = new HashSet<Integer>();
+
+	@Override
+	public void init(JSONObject props) {
+
+		
+		
+	}
+
+	@Override
+	public void execute(final Context ctx) throws Exception {
+		
+		List<com.winksys.renaserv.data.Credential> credentials = ctx.getCredentials(1);
+
+		for (Credential credential : credentials) {
+			
+			boolean init = mapControl.contains(credential.getId());
+
+			if (!init) {
+				new Thread(new CredentialRunnable(ctx, credential)).start();
+				
+				mapControl.add(credential.getId());
+			}
+
+		}
+		
+	}
+
+	private void handleVeiculo(final JSONObject veiculo, final Credential credential, final Context ctx)
+			throws ClientProtocolException, IOException {
+
+		new HandleVeiculoTask(veiculo, credential, ctx).execute();
+
+	}
+
+}

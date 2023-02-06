@@ -1,0 +1,62 @@
+.mat-card{
+	margin: 10px;
+}
+.form-tratativa{
+	min-width: 150px;
+	#max-width: 500px;
+	width: 100%;
+}
+.tratativa-full-width{
+	width: 100%;
+}
+.ocorrencia-status{
+	display: inline-block;
+}
+.finalizar-button{
+	margin: 10px;
+}
+.info{
+	display: inline-block;
+	width: 50%;
+	min-width: 450px;
+	margin: auto;	
+	vertical-align: top;
+	font-size: 12px;
+}
+
+.map{
+	display: inline-block;
+	width: 50%;
+	min-width: 450px;
+	margin: auto;
+	vertical-align: top;
+}
+.info table, 
+.map table {
+	border-collapse: collapse;
+	font-size: 12px;
+}
+.map table td,
+.info table td{
+	padding: 5px;
+}
+
+.tratativa,
+.ultimas-tratativas{
+	display: inline-block;
+	vertical-align: top;
+	width: 50%;
+	min-width: 450px;
+}
+.ultimas-tratativas table{
+	width: 100%;
+	border-collapse: collapse;
+}
+.ultimas-tratativas table th,
+.ultimas-tratativas table td{
+	font-size: 12px;
+	padding: 5px;
+}
+.ultimas-tratativas table th{
+	text-align: left;
+}

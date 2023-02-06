@@ -1,0 +1,93 @@
+package com.winksys.renaserv.gateway.driver.stc;
+
+import javax.persistence.EntityManager;
+
+import org.apache.log4j.Logger;
+
+import com.winksys.renaserv.data.Credential;
+import com.winksys.renaserv.data.Proprietario;
+import com.winksys.renaserv.data.Proprietario.ProprietarioId;
+import com.winksys.renaserv.data.Veiculo;
+import com.winksys.renaserv.data.Veiculo.VeiculoId;
+import com.winksys.renaserv.gateway.DataProxy;
+import com.winksys.renaserv.gateway.cmd.ICommand;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+public class VehicleProcessor {
+
+	private static final Logger LOG = Logger.getLogger(VehicleProcessor.class);
+	private DataProxy proxy;
+	private JSONArray data;
+	private Credential cred;
+
+	public VehicleProcessor(DataProxy proxy, JSONArray data, Credential cred) {
+		this.proxy = proxy;
+		this.data = data;
+		this.cred = cred;
+	}
+
+	public void execute() {
+		
+		for(int i = 0; i < data.size(); i++) {
+			JSONObject vjson = data.getJSONObject(i);
+			
+			LOG.debug(vjson);
+			
+			
+			VeiculoId id = new VeiculoId();
+			id.setCredential(cred);
+			id.setId(vjson.getInt("id"));
+			
+			Veiculo veiculo = proxy.execute(new ICommand() {
+				
+				@Override
+				public <E> E execute(EntityManager em) {
+					
+					return (E) em.find(Veiculo.class, id);
+					
+				}
+			});
+			
+			if (veiculo == null) {
+				veiculo = new Veiculo();
+				veiculo.setId(id);
+			}
+			
+			ProprietarioId pid = new ProprietarioId();
+			pid.setCredential(cred);
+			pid.setId(vjson.getInt("clientId"));
+			
+			Proprietario prop = new Proprietario();
+			prop.setId(pid);
+			
+			veiculo.setProprietario(prop);
+			veiculo.setPlaca(vjson.getString("lisencePlate"));
+			veiculo.setModelo(vjson.getString("model"));
+			veiculo.setCor(vjson.getString("color"));
+			veiculo.setAno(vjson.getString("modelYear"));
+			veiculo.setChassi(vjson.getString("chassi"));
+			veiculo.setRenavam(vjson.getString("renavan"));
+			
+			store(veiculo);
+			
+		}
+		
+	}
+
+	private void store(Veiculo veiculo) {
+		proxy.execute(new ICommand() {
+			
+			@Override
+			public <E> E execute(EntityManager em) {
+				Proprietario prop = em.find(Proprietario.class, veiculo.getProprietario().getId());
+				veiculo.setProprietario(prop);
+				
+				em.merge(veiculo);
+				return null;
+			}
+		});
+	}
+
+}
